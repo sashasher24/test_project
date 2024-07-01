@@ -1,18 +1,35 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: GitHub Actions Test
+run-name: ${{ github.actor }} made a ${{ github.event_name }} to ${{ github.ref }} branch
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  run-tests:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
       - name: Check out repository code
         uses: actions/checkout@v4
       - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+    #   - name: Print environment variables
+    #     run: |
+    #       echo "DB_URL: ${{ secrets.DB_URL }}"
+    #       echo "PORT: ${{ secrets.PORT }}"
+    #       echo "NODE_ENV: ${{ secrets.NODE_ENV }}"
+    #   - name: Set up environment and Install node dependencies
+    #     env:
+    #       DB_URL: ${{ secrets.DB_URL }}
+    #       PORT: ${{ secrets.PORT }}
+    #       NODE_ENV: ${{ secrets.NODE_ENV }}
+    #     run: npm install
+      - name: Set up environment
         run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+          echo "DB_URL = mongodb+srv://user1:passwordUser1@cluster0.dp7ex0h.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0" >> .env
+          echo "PORT = 5050" >> .env
+          echo "NODE_ENV = test" >> .env
+          cat .env
+      - name: Install node dependencies
+        run: npm install
+      - name: Run tests
+        run: npm run test
